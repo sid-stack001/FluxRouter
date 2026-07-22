@@ -6,14 +6,12 @@
 
 <p align="center">
   <b>Dynamic, complexity-aware LLM routing layer</b><br>
-  Classifies queries by complexity to dynamically dispatch fast or strong models — reducing per-query LLM costs by 62% without sacrificing response quality.
+  Classifies queries by complexity to dynamically dispatch fast or strong models; optimizing cost and latency without sacrificing response quality.
 </p>
 
 <p align="center">
   <a href="#installation"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
   <a href="#license"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License MIT"></a>
-  <a href="#benchmark-results"><img src="https://img.shields.io/badge/cost_savings-62.2%25-brightgreen.svg" alt="Cost Savings 62.2%"></a>
-  <a href="#integration-paths"><img src="https://img.shields.io/badge/sdk-Python-orange.svg" alt="Python SDK"></a>
 </p>
 
 ---
@@ -80,8 +78,8 @@ Evaluated on a stratified benchmark of 30 representative queries across coding, 
 
 ### Per-Query Comparison Highlights
 
-- **FluxRouter vs `always_strong`**: **+62.2% Cost Savings per query** ($0.000335 vs $0.000887) while maintaining **4.90 / 5** average response quality (a negligible quality delta of -0.10/5).
-- **Strong Model Usage vs. Escalation Rate**: **26.7% Total Strong Model Usage** (8/30 queries used the strong model). 7 queries were classified as `complex` and routed directly to the strong model, while 1 query was escalated via the cascade evaluation mechanism (3.3% cascade escalation rate). FluxRouter uses the strong model on ~27% of queries while maintaining 62% cost savings.
+- **FluxRouter vs `always_strong`**: Substantial cost reduction per query ($0.000335 vs $0.000887 average) while maintaining **4.90 / 5** mean response quality (a negligible quality delta of -0.10/5).
+- **Strong Model Usage vs. Escalation Rate**: **26.7% Total Strong Model Usage** (8/30 queries used the strong model). 7 queries were classified as `complex` and routed directly to the strong model, while 1 query was escalated via the cascade evaluation mechanism (3.3% cascade escalation rate).
 - **FluxRouter vs `always_fast`**: **+0.13 / 5 Quality Gain** over fast-only models by routing complex multi-step and architectural prompts to the strong model.
 
 ---
