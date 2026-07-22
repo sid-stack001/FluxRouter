@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FluxRouter</title>
+  <style>
+    /* ── Design tokens ───────────────────────────────────────────────────── */
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb33;
+      --green: #3fb950;
+      --green-dim: #238636;
+      --yellow: #e3b341;
+      --red: #f85149;
+      --orange: #f0883e;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+      --sans: "Inter", system-ui, sans-serif;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px #0008;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+
+
+    header h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -.3px;
+    }
+
+    .badge {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      color: var(--text-muted);
+    }
+
+    .status-dot::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    /* ── Layout ──────────────────────────────────────────────────────────── */
+    main {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 0;
+      height: calc(100vh - 63px);
+      overflow: hidden;
+    }
+
+    /* ── Left panel ──────────────────────────────────────────────────────── */
+    .panel-left {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* Query area — Unified Symmetrical Input Card */
+    .query-area {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .input-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color .15s, box-shadow .15s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-card:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.12);
+    }
+
+    textarea#query-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: .95rem;
+      line-height: 1.5;
+      padding: 0;
+      resize: none;
+      min-height: 48px;
+      max-height: 180px;
+      outline: none;
+    }
+
+    .input-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .shortcut-hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      user-select: none;
+    }
+
+    .shortcut-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text);
+    }
+
+    button#send-btn {
+      height: 36px;
+      padding: 0 20px;
+      background: var(--accent);
+      color: #0d1117;
+      font-weight: 600;
+      font-size: .85rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .15s, transform .1s, opacity .15s;
+    }
+
+    button#send-btn:hover {
+      background: #79b8ff;
+    }
+
+    button#send-btn:active {
+      transform: scale(.97);
+    }
+
+    button#send-btn:disabled {
+      background: var(--surface2);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: none;
+      width: 15px;
+      height: 15px;
+      border: 2px solid #0004;
+      border-top-color: #0d1117;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    button#send-btn.loading .spinner {
+      display: block;
+    }
+
+    button#send-btn.loading .btn-label {
+      display: none;
+    }
+
+    /* Response area */
+    .response-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      gap: 14px;
+    }
+
+    .empty-state svg {
+      opacity: .3;
+    }
+
+    .empty-state p {
+      font-size: .9rem;
+      font-weight: 500;
+    }
+
+
+    /* Prompt card */
+    .prompt-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn .3s ease;
+    }
+
+    .prompt-card .card-header {
+      padding: 10px 18px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .4px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .prompt-card .card-body {
+      padding: 14px 18px;
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* Response card */
+    .response-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn .3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+    }
+
+    .response-card .card-header {
+      padding: 12px 18px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .4px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .response-card .card-body {
+      padding: 20px;
+      font-size: .94rem;
+      line-height: 1.7;
+    }
+
+    /* Markdown Code Blocks Styling inside Response Card */
+    .card-body code {
+      font-family: var(--mono);
+      font-size: 0.85em;
+      background: var(--surface2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .card-body pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    .card-body pre code {
+      background: transparent;
+      padding: 0;
+      color: var(--text);
+    }
+
+    /* Routing card */
+    .routing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn .3s ease .05s both;
+    }
+
+    .routing-card .card-header {
+      padding: 12px 18px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .4px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .routing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+    }
+
+    .routing-cell {
+      background: var(--surface);
+      padding: 14px 16px;
+    }
+
+    .routing-cell .cell-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .routing-cell .cell-value {
+      font-family: var(--mono);
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .routing-models {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--text-muted);
+    }
+
+    /* Tier badges */
+    .tier-simple {
+      color: var(--green);
+    }
+
+    .tier-medium {
+      color: var(--yellow);
+    }
+
+    .tier-complex {
+      color: var(--orange);
+    }
+
+    .esc-yes {
+      color: var(--red);
+    }
+
+    .esc-no {
+      color: var(--green);
+    }
+
+    /* Error */
+    .error-card {
+      background: #1a0a0a;
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--red);
+      animation: fadeIn .2s ease;
+    }
+
+    /* ── Right panel — session stats ─────────────────────────────────────── */
+    .panel-right {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--surface);
+    }
+
+    .stats-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .6px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    button#reset-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: .7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+
+    button#reset-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .stat-section {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-section h3 {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .6px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      font-size: .82rem;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-family: var(--mono);
+      font-size: .92rem;
+      font-weight: 600;
+    }
+
+    .stat-value.accent {
+      color: var(--accent);
+    }
+
+    .stat-value.green {
+      color: var(--green);
+    }
+
+    .stat-value.yellow {
+      color: var(--yellow);
+    }
+
+    .stat-value.orange {
+      color: var(--orange);
+    }
+
+    /* Gauge bar */
+    .gauge-bar {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 99px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--green), var(--accent));
+      transition: width .4s ease;
+    }
+
+    /* Cost saved hero display */
+    .cost-saved-display {
+      text-align: center;
+      padding: 22px 20px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cost-saved-display .amount {
+      font-family: var(--mono);
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: -1px;
+    }
+
+    .cost-saved-display .sublabel {
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* History list */
+    .history-header {
+      padding: 14px 20px 8px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .6px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-item {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .history-item:hover {
+      background: var(--surface2);
+    }
+
+    .history-item .hi-query {
+      font-size: .82rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .history-item .hi-meta {
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 10px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 99px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <img src="/static/logo.jpg" alt="FluxRouter Logo" class="logo">
+    <h1>FluxRouter</h1>
+    <span class="status-dot" id="api-status">API connected</span>
+  </header>
+
+
+  <main>
+    <!-- ── Left panel ──────────────────────────────────────────────────── -->
+    <div class="panel-left">
+
+      <div class="query-area">
+        <div class="input-card">
+          <textarea id="query-input" rows="2"
+            placeholder="Ask anything — FluxRouter will classify and route it…"></textarea>
+          <div class="input-toolbar">
+            <div class="shortcut-hint">
+              <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to send
+            </div>
+            <button id="send-btn">
+              <span class="btn-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+                Send
+              </span>
+              <div class="spinner"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="response-area" id="response-area">
+        <div class="empty-state" id="empty-state">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <p>Send a query to see the routing decision</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Right panel — session stats ─────────────────────────────────── -->
+    <div class="panel-right">
+
+      <div class="stats-header">
+        Session Stats
+        <button id="reset-btn">Reset</button>
+      </div>
+
+      <!-- Cost saved hero -->
+      <div class="cost-saved-display">
+        <div class="amount" id="stat-cost-saved">$0.0000</div>
+        <div class="sublabel">estimated cost saved vs. always-strong</div>
+      </div>
+
+      <!-- Counters -->
+      <div class="stat-section">
+        <h3>Query Volume</h3>
+        <div class="stat-row">
+          <span class="stat-label">Total queries</span>
+          <span class="stat-value accent" id="stat-total">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Fast-only routed</span>
+          <span class="stat-value green" id="stat-fast">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Escalated to strong</span>
+          <span class="stat-value orange" id="stat-escalated">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Escalation rate</span>
+          <span class="stat-value yellow" id="stat-esc-rate">—</span>
+        </div>
+        <div class="gauge-bar">
+          <div class="gauge-fill" id="stat-esc-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Tier breakdown -->
+      <div class="stat-section">
+        <h3>Tier Breakdown</h3>
+        <div class="stat-row">
+          <span class="stat-label tier-simple">● Simple</span>
+          <span class="stat-value" id="stat-simple">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label tier-medium">● Medium</span>
+          <span class="stat-value" id="stat-medium">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label tier-complex">● Complex</span>
+          <span class="stat-value" id="stat-complex">0</span>
+        </div>
+      </div>
+
+      <!-- Perf -->
+      <div class="stat-section">
+        <h3>Latency</h3>
+        <div class="stat-row">
+          <span class="stat-label">Avg this session</span>
+          <span class="stat-value accent" id="stat-avg-latency">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Last query</span>
+          <span class="stat-value" id="stat-last-latency">—</span>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="history-section">
+        <div class="history-header">Recent Queries</div>
+        <div id="history-list"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // ── Groq pricing constants (mirrors benchmark.py) ──────────────────────────
+    const PRICE_PER_M = {
+      fast: { input: 0.05, output: 0.08 },   // llama-3.1-8b-instant per 1M tok
+      strong: { input: 0.39, output: 0.49 },   // qwen/qwen3.6-27b per 1M tok
+    };
+
+    const FAST_MODEL = "llama-3.1-8b-instant";
+    const STRONG_MODEL = "qwen/qwen3.6-27b";
+
+    function costUSD(model, inputTok, outputTok) {
+      const p = model === STRONG_MODEL ? PRICE_PER_M.strong : PRICE_PER_M.fast;
+      return (inputTok * p.input + outputTok * p.output) / 1_000_000;
+    }
+
+    function strongCostFor(inputTok, outputTok) {
+      return costUSD(STRONG_MODEL, inputTok, outputTok);
+    }
+
+    // ── Session state ─────────────────────────────────────────────────────────
+    let session = emptySession();
+
+    function emptySession() {
+      return {
+        total: 0, fast: 0, escalated: 0,
+        simple: 0, medium: 0, complex: 0,
+        totalLatency: 0, lastLatency: 0,
+        costSaved: 0,
+      };
+    }
+
+    function recordResult(routing, usage) {
+      session.total++;
+      if (routing.escalated) session.escalated++;
+      else session.fast++;
+
+      const tier = routing.predicted_tier;
+      if (tier === "simple") session.simple++;
+      else if (tier === "medium") session.medium++;
+      else if (tier === "complex") session.complex++;
+
+      session.lastLatency = routing.total_latency_ms;
+      session.totalLatency += routing.total_latency_ms;
+
+      const actualModel = routing.models_called.at(-1) ?? FAST_MODEL;
+      const actualCost = costUSD(actualModel, usage.prompt_tokens, usage.completion_tokens);
+      const strongCost = strongCostFor(usage.prompt_tokens, usage.completion_tokens);
+      session.costSaved += Math.max(0, strongCost - actualCost);
+    }
+
+    function updateStats() {
+      const s = session;
+      const escRate = s.total ? (s.escalated / s.total * 100).toFixed(1) + "%" : "—";
+      const avgLat = s.total ? (s.totalLatency / s.total).toFixed(0) + " ms" : "—";
+
+      document.getElementById("stat-cost-saved").textContent = "$" + s.costSaved.toFixed(4);
+      document.getElementById("stat-total").textContent = s.total;
+      document.getElementById("stat-fast").textContent = s.fast;
+      document.getElementById("stat-escalated").textContent = s.escalated;
+      document.getElementById("stat-esc-rate").textContent = escRate;
+      document.getElementById("stat-simple").textContent = s.simple;
+      document.getElementById("stat-medium").textContent = s.medium;
+      document.getElementById("stat-complex").textContent = s.complex;
+      document.getElementById("stat-avg-latency").textContent = avgLat;
+      document.getElementById("stat-last-latency").textContent = s.total ? s.lastLatency.toFixed(0) + " ms" : "—";
+
+      const bar = s.total ? (s.escalated / s.total * 100) : 0;
+      document.getElementById("stat-esc-bar").style.width = bar + "%";
+    }
+
+    // ── History list ──────────────────────────────────────────────────────────
+    const historyItems = [];
+
+    function addHistory(query, routing) {
+      historyItems.unshift({ query, routing });
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("history-list");
+      list.innerHTML = historyItems.slice(0, 30).map((item, i) => {
+        const r = item.routing;
+        const tierClass = `tier-${r.predicted_tier}`;
+        return `
+        <div class="history-item" data-idx="${i}">
+          <div class="hi-query">${escapeHtml(item.query.slice(0, 70))}</div>
+          <div class="hi-meta">
+            <span class="${tierClass}">${r.predicted_tier}</span>
+            <span>${r.total_latency_ms.toFixed(0)}ms</span>
+            <span>margin=${r.margin.toFixed(3)}</span>
+            ${r.escalated ? '<span style="color:var(--red)">escalated</span>' : ''}
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    // ── Markdown Formatter ───────────────────────────────────────────────────
+    function formatMarkdown(text) {
+      let html = escapeHtml(text);
+      // Code blocks ```lang ... ```
+      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+        return `<pre><code class="language-${lang}">${code}</code></pre>`;
+      });
+      // Inline code `code`
+      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // Bold **text**
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      return html;
+    }
+
+    // ── Render routing decision ───────────────────────────────────────────────
+    function tierClass(tier) {
+      return `tier-${tier}`;
+    }
+
+    function renderRoutingCard(routing) {
+      const escClass = routing.escalated ? "esc-yes" : "esc-no";
+      const escLabel = routing.escalated ? "YES ▲" : "no";
+      const judge = routing.judge_score != null ? routing.judge_score + "/5" : "—";
+      const models = routing.models_called.join(" → ");
+
+      return `
+      <div class="routing-card">
+        <div class="card-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Routing Decision
+        </div>
+        <div class="routing-grid">
+          <div class="routing-cell">
+            <div class="cell-label">Tier</div>
+            <div class="cell-value ${tierClass(routing.predicted_tier)}">${routing.predicted_tier}</div>
+          </div>
+          <div class="routing-cell">
+            <div class="cell-label">Margin</div>
+            <div class="cell-value">${routing.margin.toFixed(4)}</div>
+          </div>
+          <div class="routing-cell">
+            <div class="cell-label">Escalated</div>
+            <div class="cell-value ${escClass}">${escLabel}</div>
+          </div>
+          <div class="routing-cell">
+            <div class="cell-label">Judge Score</div>
+            <div class="cell-value">${judge}</div>
+          </div>
+          <div class="routing-cell">
+            <div class="cell-label">Latency</div>
+            <div class="cell-value">${routing.total_latency_ms.toFixed(0)} ms</div>
+          </div>
+        </div>
+        <div class="routing-models">
+          <span style="color:var(--text-muted)">models called: </span>${escapeHtml(models)}
+        </div>
+      </div>`;
+    }
+
+
+    function renderPromptCard(query) {
+      return `
+      <div class="prompt-card">
+        <div class="card-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+          </svg>
+          User Prompt
+        </div>
+        <div class="card-body">${escapeHtml(query)}</div>
+      </div>`;
+    }
+
+    function renderResponseCard(text) {
+      return `
+      <div class="response-card">
+        <div class="card-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Response
+        </div>
+        <div class="card-body">${formatMarkdown(text)}</div>
+      </div>`;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // ── API call ──────────────────────────────────────────────────────────────
+    async function sendQuery(query) {
+      const btn = document.getElementById("send-btn");
+      const area = document.getElementById("response-area");
+      const empty = document.getElementById("empty-state");
+
+      btn.disabled = true;
+      btn.classList.add("loading");
+      if (empty) empty.style.display = "none";
+
+      try {
+        const res = await fetch("/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [{ role: "user", content: query }]
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ detail: res.statusText }));
+          area.innerHTML = `<div class="error-card">Error ${res.status}: ${escapeHtml(JSON.stringify(err))}</div>`;
+          return;
+        }
+
+        const data = await res.json();
+        const text = data.choices?.[0]?.message?.content ?? "(no response)";
+        const routing = data.routing;
+        const usage = data.usage;
+
+        // Insert at top of response area
+        const wrapper = document.createElement("div");
+        wrapper.style.cssText = "display:flex;flex-direction:column;gap:16px";
+        wrapper.innerHTML = renderPromptCard(query) + renderResponseCard(text) + renderRoutingCard(routing);
+        area.insertBefore(wrapper, area.firstChild);
+
+        // Update session stats
+        recordResult(routing, usage);
+        updateStats();
+        addHistory(query, routing);
+
+      } catch (err) {
+        area.innerHTML = `<div class="error-card">Network error: ${escapeHtml(String(err))}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove("loading");
+      }
+    }
+
+    // ── Event listeners ───────────────────────────────────────────────────────
+    const textarea = document.getElementById("query-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    sendBtn.addEventListener("click", () => {
+      const q = textarea.value.trim();
+      if (!q) return;
+      textarea.value = "";
+      textarea.style.height = "auto";
+      sendQuery(q);
+    });
+
+    // Cmd/Ctrl + Enter to send
+    textarea.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        sendBtn.click();
+      }
+      // Auto-grow textarea
+      setTimeout(() => {
+        textarea.style.height = "auto";
+        textarea.style.height = Math.min(textarea.scrollHeight, 180) + "px";
+      }, 0);
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      session = emptySession();
+      updateStats();
+      historyItems.length = 0;
+      renderHistory();
+    });
+
+    // Health check
+    (async () => {
+      try {
+        const r = await fetch("/health");
+        const d = await r.json();
+        const dot = document.getElementById("api-status");
+        if (!d.ready) {
+          dot.textContent = "API warming up…";
+          dot.style.setProperty("--dot-color", "var(--yellow)");
+        }
+      } catch { /* offline */ }
+    })();
+
+    // Init display
+    updateStats();
+  </script>
+</body>
+
+</html>
