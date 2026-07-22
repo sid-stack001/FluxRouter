@@ -18,7 +18,7 @@
 
 ## Why FluxRouter?
 
-Routing every prompt to a frontier model like `qwen-27b` or `llama-70b` is **wildly expensive** — 70% of production LLM queries (simple facts, basic syntax checks, short summaries) can be answered flawlessly by lightweight 8B models at **1/10th the cost**.
+Routing every prompt to a frontier model like `qwen-27b` or `llama-70b` is **wildly expensive**, 70% of production LLM queries (simple facts, basic syntax checks, short summaries) can be answered flawlessly by lightweight 8B models at **1/10th the cost**.
 
 Conversely, locking your application to a small fast model leads to **hallucinations and incomplete reasoning** on difficult architectural, algorithmic, or debugging prompts.
 
@@ -111,7 +111,7 @@ git clone https://github.com/your-org/fluxrouter.git
 cd fluxrouter
 pip install -e .
 
-# 2. Interactive setup — configures Groq API key and defaults in ~/.fluxrouter/config.yaml
+# 2. Interactive setup: configures Groq API key and defaults in ~/.fluxrouter/config.yaml
 fluxrouter init
 
 # 3. Route your first prompt
@@ -145,7 +145,7 @@ fluxrouter config --show
 
 ### 2. OpenAI-Compatible API Proxy Server
 
-Exposes an OpenAI-compatible `/v1/chat/completions` endpoint, so it can be used as a drop-in backend anywhere you'd normally point the standard `openai` SDK — including most agent frameworks that support custom OpenAI-compatible base URLs (e.g. LangChain, AutoGen). Tested directly with the `openai` Python SDK; framework-specific integration not yet verified.
+Exposes an OpenAI-compatible `/v1/chat/completions` endpoint, so it can be used as a drop-in backend anywhere you'd normally point the standard `openai` SDK, including most agent frameworks that support custom OpenAI-compatible base URLs (e.g. LangChain, AutoGen). Tested directly with the `openai` Python SDK; framework-specific integration not yet verified.
 
 ```bash
 fluxrouter serve --port 8000
