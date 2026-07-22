@@ -66,6 +66,14 @@ Conversely, locking your application to a small fast model leads to **hallucinat
 
 ---
 
+### Web Dashboard
+
+<p align="center">
+  <img src="assets/dashboard.png" alt="FluxRouter Web Dashboard" width="850">
+</p>
+
+
+
 ## Benchmark Results
 
 Evaluated on a stratified benchmark of 30 representative queries across coding, system architecture, debugging, summarization, and general QA (blind LLM-as-judge scoring 1–5):
@@ -115,6 +123,11 @@ fluxrouter route "What is the capital of France?"
 ## Integration Paths
 
 ### 1. Command Line Interface (CLI)
+
+<p align="center">
+  <img src="assets/cli_snap.png" alt="FluxRouter CLI Routing Demo" width="850">
+</p>
+
 
 ```bash
 # Direct routing with Rich terminal formatting
