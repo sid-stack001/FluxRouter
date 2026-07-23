@@ -107,7 +107,7 @@ Evaluated on a stratified benchmark of 30 representative queries across coding, 
 
 ```bash
 # 1. Install in editable mode
-git clone https://github.com/your-org/fluxrouter.git
+git clone https://github.com/sid-stack001/FluxRouter.git
 cd fluxrouter
 pip install -e .
 
