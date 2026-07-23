@@ -106,6 +106,9 @@ Evaluated on a stratified benchmark of 30 representative queries across coding, 
 ## Installation & Quickstart
 
 ```bash
+# 00. Now published at pypi.org, a simple pip install will work; steps 1 to 3 are not required for the sake of use anymore.
+pip install fluxrouter
+
 # 1. Install in editable mode
 git clone https://github.com/sid-stack001/FluxRouter.git
 cd fluxrouter
