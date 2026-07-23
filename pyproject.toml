@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fluxrouter"
-version = "0.1.0"
-description = "Complexity-aware LLM routing proxy — classify, cascade, orchestrate."
+version = "0.1.1"
+description = "Complexity-aware LLM routing proxy: classify, cascade, orchestrate."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
