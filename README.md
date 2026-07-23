@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.jpg" width="140" alt="FluxRouter Logo">
+  <img src="https://raw.githubusercontent.com/sid-stack001/FluxRouter/main/assets/logo.jpg" width="140" alt="FluxRouter Logo">
 </p>
 
 <h1 align="center">FluxRouter</h1>
@@ -69,7 +69,7 @@ Conversely, locking your application to a small fast model leads to **hallucinat
 ### Web Dashboard
 
 <p align="center">
-  <img src="assets/dashboard.png" alt="FluxRouter Web Dashboard" width="850">
+  <img src="https://raw.githubusercontent.com/sid-stack001/FluxRouter/main/assets/dashboard.png" alt="FluxRouter Web Dashboard" width="850">
 </p>
 
 
@@ -125,7 +125,7 @@ fluxrouter route "What is the capital of France?"
 ### 1. Command Line Interface (CLI)
 
 <p align="center">
-  <img src="assets/cli_snap.png" alt="FluxRouter CLI Routing Demo" width="850">
+  <img src="https://raw.githubusercontent.com/sid-stack001/FluxRouter/main/assets/cli_snap.png" alt="FluxRouter CLI Routing Demo" width="850">
 </p>
 
 

@@ -42,7 +42,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 console = Console()
 err = Console(stderr=True)
 
-VERSION = "0.4.0"
+VERSION = "0.1.0"
 
 # ── Pricing constants (Groq on-demand, verified 2026-07) ─────────────────────
 _PRICE = {
