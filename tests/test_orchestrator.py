@@ -11,13 +11,14 @@ If it always decomposes everything, we flag it — spurious decompositions
 burn strong-model calls on things that didn't need it.
 
 Run with:
-    /home/siddh/miniconda3/envs/flux/bin/python -m tests.test_orchestrator
+    python -m tests.test_orchestrator
 """
 
 from __future__ import annotations
 
 import sys
-sys.path.insert(0, "/home/siddh/fluxrouter")
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from router.classifier.complexity import ComplexityClassifier
 from router.adapters.groq_adapter import GroqAdapter

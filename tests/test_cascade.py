@@ -8,13 +8,14 @@ RoutingDecision for each. Validates:
     - Medium / ambiguous / hard edge-case queries go through the cascade path.
 
 Run with:
-    /home/siddh/miniconda3/envs/flux/bin/python -m tests.test_cascade
+    python -m tests.test_cascade
 """
 
 from __future__ import annotations
 
 import sys
-sys.path.insert(0, "/home/siddh/fluxrouter")
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from router.classifier.complexity import ComplexityClassifier, Complexity
 from router.cascade.controller import CascadeController

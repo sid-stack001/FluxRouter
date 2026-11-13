@@ -35,3 +35,5 @@ htmlcov/
 models.yaml
 docker-compose.yml
 
+node_modules/
+.vite/
