@@ -1,0 +1,10 @@
+# Ignore Python backend and heavy ML dependencies on Vercel
+api/
+router/
+fluxrouter/
+metrics/
+tests/
+requirements.txt
+pyproject.toml
+*.py
+
