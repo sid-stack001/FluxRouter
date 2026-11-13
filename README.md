@@ -10,8 +10,14 @@
 </p>
 
 <p align="center">
+  <a href="https://fluxrouter.vercel.app/"><img src="https://img.shields.io/badge/demo-fluxrouter.vercel.app-brightgreen.svg?style=flat&logo=vercel" alt="Live Demo"></a>
+  <a href="https://pypi.org/project/fluxrouter/"><img src="https://img.shields.io/pypi/v/fluxrouter.svg" alt="PyPI"></a>
   <a href="#installation"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
   <a href="#license"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License MIT"></a>
+</p>
+
+<p align="center">
+<b>Live Interactive Demo:</b> <a href="https://fluxrouter.vercel.app/"><b>https://fluxrouter.vercel.app/</b></a>
 </p>
 
 ---
@@ -56,7 +62,7 @@ Conversely, locking your application to a small fast model leads to **hallucinat
                                                         └─────────┬────────┘
                                                                   │
                                             ┌─────────────────────┴─────────────────────┐
-                                            │ Judge Score ≥ 4/5   │ Judge Score ≤ 3/5  │
+                                            │ Judge Score ≥ 4/5   │ Judge Score ≤ 3/5   │
                                             ▼                     ▼                     ▼
                                   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
                                   │  Keep Fast Resp  │  │ Escalate Query   │  │   Strong Model   │
@@ -66,10 +72,15 @@ Conversely, locking your application to a small fast model leads to **hallucinat
 
 ---
 
-### Web Dashboard
+### Web Dashboard & Live Demo
+
+Test real-time k-NN embedding routing, nearest-neighbor evidence, and cost savings directly in your browser:  
+👉 **[https://fluxrouter.vercel.app/](https://fluxrouter.vercel.app/)**
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sid-stack001/FluxRouter/main/assets/dashboard.png" alt="FluxRouter Web Dashboard" width="850">
+  <a href="https://fluxrouter.vercel.app/">
+    <img src="https://raw.githubusercontent.com/sid-stack001/FluxRouter/main/assets/dashboard.png" alt="FluxRouter Web Dashboard" width="850">
+  </a>
 </p>
 
 
